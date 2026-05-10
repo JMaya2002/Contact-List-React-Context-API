@@ -1,32 +1,39 @@
-export const initialStore=()=>{
-  return{
-    message: null,
-    todos: [
-      {
-        id: 1,
-        title: "Make the bed",
-        background: null,
-      },
-      {
-        id: 2,
-        title: "Do my homework",
-        background: null,
-      }
-    ]
-  }
-}
+// Estado inicial del store global
+export const initialStore = () => {
+  return {
+    contacts: [],
+    slug: "joelmaya-contacts"
+  };
+};
 
+// Reducer que gestiona los cambios del store
 export default function storeReducer(store, action = {}) {
-  switch(action.type){
-    case 'add_task':
+  switch (action.type) {
+    // Cargar todos los contactos desde la API
+    case "set_contacts":
+      return { ...store, contacts: action.payload };
 
-      const { id,  color } = action.payload
+    // Añadir un contacto nuevo
+    case "add_contact":
+      return { ...store, contacts: [...store.contacts, action.payload] };
 
+    // Actualizar un contacto existente
+    case "update_contact":
       return {
         ...store,
-        todos: store.todos.map((todo) => (todo.id === id ? { ...todo, background: color } : todo))
+        contacts: store.contacts.map(c =>
+          c.id === action.payload.id ? action.payload : c
+        )
       };
+
+    // Borrar un contacto por su id
+    case "delete_contact":
+      return {
+        ...store,
+        contacts: store.contacts.filter(c => c.id !== action.payload)
+      };
+
     default:
-      throw Error('Unknown action.');
-  }    
+      throw Error("Acción desconocida.");
+  }
 }
